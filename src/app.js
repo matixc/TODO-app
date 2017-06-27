@@ -31,7 +31,11 @@ class Footer extends React.Component {
     console.log(left)
     return(
       <div>
-        {left} tasks left    <p onClick={this.props.clearDone}>erase </p>
+        {left} tasks left
+        <button onClick={this.props.changeView} value="all">All </button>
+        <button onClick={this.props.changeView} value="todo">Active </button>
+        <button onClick={this.props.changeView} value="done">Compleated </button>
+        <p onClick={this.props.clearDone}>Erase </p>
       </div>
       )
   }
@@ -84,6 +88,7 @@ class App extends React.Component {
         {title: "Ride a bike", done: false, id: 2},
         {title: "Get some sleep", done: true, id: 3},
         {title: "go home", done: false, id: 4}],
+      display: "all",
       nextId: 5
     }
 
@@ -91,6 +96,7 @@ class App extends React.Component {
     this.doneClick = this.doneClick.bind(this);
     this.clearDone = this.clearDone.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.changeView = this.changeView.bind(this)
   }
 
   componentDidMount() {
@@ -131,16 +137,30 @@ class App extends React.Component {
     localStorage.setItem("todo", JSON.stringify(this.state))
   }
 
+  changeView(event) {
+    let view = event.target.value
+    console.log(view)
+    this.setState({view: view})
+  }
+
   render(){
+    let tasks = this.state.tasks
+    if(this.state.view === "todo") {
+      tasks = tasks.filter(task => task.done === false)
+    }
+    if(this.state.view === "done") {
+      tasks = tasks.filter(task => task.done === true)
+    }
+
     let tasksArr = []
-    this.state.tasks.forEach((task,index) => {
+    tasks.forEach((task,index) => {
       tasksArr.push(<Task key={index} index={index} title={task.title} done={task.done} doneClick={this.doneClick} />)
     })
     return(
       <div>
         <Input onChange={this.handleChange} value={this.state.input} handleSubmit={this.handleSubmit}/>
         {tasksArr}
-        <Footer tasks={this.state.tasks} clearDone={this.clearDone}/>
+        <Footer tasks={this.state.tasks} clearDone={this.clearDone} changeView={this.changeView}/>
       </div>
     )
   }
