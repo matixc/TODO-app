@@ -142,6 +142,10 @@ class App extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+    localStorage.setItem("todo", JSON.stringify(this.state))
+  }
+
   handleChange(event) {
     this.setState({ input: event.target.value})
   }
@@ -150,7 +154,6 @@ class App extends React.Component {
     let tasks = this.state.tasks
     tasks[index].done = !tasks[index].done
     this.setState({tasks: tasks})
-    localStorage.setItem("todo", JSON.stringify(this.state))
   }
 
   clearDone() {
@@ -159,7 +162,6 @@ class App extends React.Component {
     tasks = tasks.filter((task) => task.done === false)
     console.log(tasks)
     this.setState({tasks: tasks})
-    localStorage.setItem("todo", JSON.stringify(this.state))
   }
 
   handleSubmit(event) {
@@ -169,7 +171,6 @@ class App extends React.Component {
     let tasks = this.state.tasks
     tasks.push(newTask)
     this.setState({input: "", tasks: tasks, nextId: nextId})
-    localStorage.setItem("todo", JSON.stringify(this.state))
   }
 
   changeView(event) {
