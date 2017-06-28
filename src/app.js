@@ -8,7 +8,7 @@ require('./style.scss');
 class Input extends React.Component {
   render() {
     return(
-      <div>
+      <div className="task-input">
         <form onSubmit={this.props.handleSubmit}>
           <input type="text" onChange={this.props.onChange} value={this.props.value}></input>
         </form>
@@ -30,11 +30,13 @@ class Footer extends React.Component {
     let left = this.props.tasks.filter((task) => task.done === false).length
     console.log(left)
     return(
-      <div>
+      <div className="task-footer">
         {left} tasks left
-        <button onClick={this.props.changeView} value="all">All </button>
-        <button onClick={this.props.changeView} value="todo">Active </button>
-        <button onClick={this.props.changeView} value="done">Compleated </button>
+        <div className="task-footer-buttons">
+          <button onClick={this.props.changeView} value="all">All </button>
+          <button onClick={this.props.changeView} value="todo">Active </button>
+          <button onClick={this.props.changeView} value="done">Compleated </button>
+        </div>
         <p onClick={this.props.clearDone}>Erase </p>
       </div>
       )
@@ -70,31 +72,35 @@ class Task extends React.Component {
 
   mouseEnter() {
     this.setState({hover: true})
-    console.log("hover")
   }
 
   mouseLeave() {
     this.setState({hover: false})
-    console.log("out")
   }
 
   render() {
-    let title = <p> {this.props.task.title}   </p>
+    let title = <p className="task-title"> {this.props.task.title}   </p>
     if (this.props.task.done === true) {
-       title =  <p style={{textDecoration: "line-through"}}> {this.props.task.title}   </p>;
+       title =  <p className="task-title" style={{textDecoration: "line-through"}}> {this.props.task.title}   </p>;
     }
+
     let deleteButton = ""
-    if (this.state.hover) {deleteButton = <button onClick={this.deleteTask}> X </button>}
+    if (this.state.hover) {deleteButton = <div className="task-deleteButton" onClick={this.deleteTask}> X </div>}
     else {deleteButton = ""}
 
+    let className = ""
+    this.props.task.done === false ? className = "task" : className = "task task-done"
+
     return(
-      <div onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
-        {title}
+      <div className={className} onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
+
         <input
+          className="task-checkbox"
           type="checkbox"
           checked={this.props.task.done}
           onChange={this.doneClick}
         />
+        {title}
         {deleteButton}
 
       </div>
@@ -195,7 +201,7 @@ class App extends React.Component {
     })
 
     return(
-      <div>
+      <div className="app">
         <Input onChange={this.handleChange} value={this.state.input} handleSubmit={this.handleSubmit}/>
         {tasksArr}
         <Footer tasks={this.state.tasks} clearDone={this.clearDone} changeView={this.changeView}/>

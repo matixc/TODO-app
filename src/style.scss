@@ -1,6 +1,117 @@
+
+$primary-color: #29B6F6;
+$main-shadow: 0 2px 4px rgba(0,0,0,0.19), 0 2px 4px rgba(0,0,0,0.23);
+
+
 body {
+  display: flex;
+  justify-content: center;
 }
 
 div {
-  border: 1px solid black;
+ // border: solid 1px red;
 }
+
+.app {
+  position:relative;
+  width: 450px;
+  margin: 0 auto;
+  padding: 10px;
+  background-color: #90CAF9;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1em;
+  color: white;
+  border-radius: 2px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.30), 0 3px 6px rgba(0,0,0,0.22);
+}
+
+.task {
+  margin: 4px;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: $primary-color;
+  box-shadow: $main-shadow;
+}
+
+.task-done {
+  background-color: lightgray;
+}
+
+.task > p {
+  padding-left: 10px;
+}
+
+.task-checkbox {
+  min-width: 15px;
+  display: inline-block;
+  margin: 0;
+}
+
+.task-title{
+  display: inline-block;
+}
+
+.task-deleteButton  {
+  display: inline-block;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  text-indent: 1.5px;
+  border-radius: 15px;
+  background-color: #FF9800;
+  margin-left: auto;
+  font-size: 22px;
+}
+
+.task-input {
+  min-height: 52px;
+  margin: 4px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  background-color: $primary-color;
+  box-shadow: $main-shadow;
+}
+
+.task-input > form {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+}
+
+.task-input > form > input {
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1em;
+  color:  white;
+  background-color: $primary-color;
+  border-width: 0 0 1px;
+  border-color: white;
+  outline-color: white;
+}
+
+.task-footer {
+  margin: 4px;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $primary-color;
+  box-shadow: $main-shadow;
+}
+
+.task-footer-buttons > button {
+  margin: 3px;
+  background: $primary-color;
+  font-family: 'Roboto', sans-serif;
+  border: 0;
+  color:  white;
+}
+
