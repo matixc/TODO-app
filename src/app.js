@@ -49,26 +49,54 @@ class Task extends React.Component {
   constructor(props){
     super(props)
 
-    this.doneClick = this.doneClick.bind(this)
+    this.state = {
+      hover: false
+    }
+
+    this.doneClick = this.doneClick.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
+    this.mouseEnter = this.mouseEnter.bind(this);
+    this.mouseLeave = this.mouseLeave.bind(this);
+
   }
 
   doneClick() {
     this.props.doneClick(this.props.index)
   }
 
+  deleteTask() {
+    this.props.deleteTask(this.props.task.id)
+  }
+
+  mouseEnter() {
+    this.setState({hover: true})
+    console.log("hover")
+  }
+
+  mouseLeave() {
+    this.setState({hover: false})
+    console.log("out")
+  }
+
   render() {
-    let title = <p> {this.props.title}   </p>
-    if (this.props.done === true) {
-       title =  <p style={{textDecoration: "line-through"}}> {this.props.title}   </p>;
+    let title = <p> {this.props.task.title}   </p>
+    if (this.props.task.done === true) {
+       title =  <p style={{textDecoration: "line-through"}}> {this.props.task.title}   </p>;
     }
+    let deleteButton = ""
+    if (this.state.hover) {deleteButton = <button onClick={this.deleteTask}> X </button>}
+    else {deleteButton = ""}
+
     return(
-      <div>
+      <div onMouseEnter={this.mouseEnter} onMouseLeave={this.mouseLeave}>
         {title}
         <input
           type="checkbox"
-          checked={this.props.done}
+          checked={this.props.task.done}
           onChange={this.doneClick}
         />
+        {deleteButton}
+
       </div>
       )
   }
@@ -96,7 +124,8 @@ class App extends React.Component {
     this.doneClick = this.doneClick.bind(this);
     this.clearDone = this.clearDone.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.changeView = this.changeView.bind(this)
+    this.changeView = this.changeView.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
   }
 
   componentDidMount() {
@@ -143,7 +172,15 @@ class App extends React.Component {
     this.setState({view: view})
   }
 
+  deleteTask(id) {
+    console.log(`delete ${id}`)
+    let tasks = this.state.tasks
+    tasks = tasks.filter(task => task.id !== id)
+    this.setState({tasks: tasks})
+  }
+
   render(){
+
     let tasks = this.state.tasks
     if(this.state.view === "todo") {
       tasks = tasks.filter(task => task.done === false)
@@ -154,8 +191,9 @@ class App extends React.Component {
 
     let tasksArr = []
     tasks.forEach((task,index) => {
-      tasksArr.push(<Task key={index} index={index} title={task.title} done={task.done} doneClick={this.doneClick} />)
+      tasksArr.push(<Task key={index} index={index} task={task} doneClick={this.doneClick} deleteTask={this.deleteTask}/>)
     })
+
     return(
       <div>
         <Input onChange={this.handleChange} value={this.state.input} handleSubmit={this.handleSubmit}/>
