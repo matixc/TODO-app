@@ -52,14 +52,17 @@ class Task extends React.Component {
     super(props)
 
     this.state = {
-      hover: false
+      hover: false,
+      title: ""
     }
 
     this.doneClick = this.doneClick.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
     this.mouseEnter = this.mouseEnter.bind(this);
     this.mouseLeave = this.mouseLeave.bind(this);
-
+    this.editTask = this.editTask.bind(this);
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   doneClick() {
@@ -78,14 +81,38 @@ class Task extends React.Component {
     this.setState({hover: false})
   }
 
+  editTask(event){
+    if(this.props.editing === false)  {
+        this.props.editTask(event, this.props.task.id)
+        let title = this.props.task.title
+        this.setState({title: title})
+      }
+  }
+
+  handleChange(event) {
+    this.setState({title: event.target.value})
+  }
+
+  handleSubmit(event) {
+    event.preventDefault()
+    this.props.saveEditTask(this.props.task.id, this.state.title)
+    console.log("submit")
+  }
+
+
   render() {
-    let title = <p className="task-title"> {this.props.task.title}   </p>
+    let title = <p className="task-title" onDoubleClick={this.editTask}> {this.props.task.title}   </p>
     if (this.props.task.done === true) {
        title =  <p className="task-title" style={{textDecoration: "line-through"}}> {this.props.task.title}   </p>;
     }
+    if (this.props.task.edit === true) {
+      title = <form onSubmit={this.handleSubmit}>
+      <input type="text" value={this.state.title} onChange={this.handleChange} onSubmit={this.handleSubmit}/>
+      </form>
+    }
 
     let deleteButton = ""
-    if (this.state.hover) {deleteButton = <div className="task-deleteButton" onClick={this.deleteTask}> X </div>}
+    if (this.state.hover && this.props.task.edit === false) {deleteButton = <div className="task-deleteButton" onClick={this.deleteTask}> X </div>}
     else {deleteButton = ""}
 
     let className = ""
@@ -118,10 +145,11 @@ class App extends React.Component {
 
     this.state = {
       input: "123",
-      tasks: [{title: "TODO App", done: false, id: 1},
-        {title: "Ride a bike", done: false, id: 2},
-        {title: "Get some sleep", done: true, id: 3},
-        {title: "go home", done: false, id: 4}],
+      edit: false,
+      tasks: [{title: "TODO App", done: false, edit: false, id: 1},
+        {title: "Ride a bike", done: false, edit: false, id: 2},
+        {title: "Get some sleep", done: true, edit: false, id: 3},
+        {title: "go home", done: false, edit: false, id: 4}],
       display: "all",
       nextId: 5
     }
@@ -132,6 +160,8 @@ class App extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.changeView = this.changeView.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
+    this.editTask = this.editTask.bind(this)
+    this.saveEditTask = this.saveEditTask.bind(this)
   }
 
   componentDidMount() {
@@ -166,11 +196,13 @@ class App extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault()
-    let newTask = {title: this.state.input, done: false, id: this.state.nextId}
-    let nextId = this.state.nextId + 1
-    let tasks = this.state.tasks
-    tasks.push(newTask)
-    this.setState({input: "", tasks: tasks, nextId: nextId})
+    if (this.state.edit === false) {
+      let newTask = {title: this.state.input, done: false, id: this.state.nextId}
+      let nextId = this.state.nextId + 1
+      let tasks = this.state.tasks
+      tasks.push(newTask)
+      this.setState({input: "", tasks: tasks, nextId: nextId})
+    }
   }
 
   changeView(event) {
@@ -186,6 +218,21 @@ class App extends React.Component {
     this.setState({tasks: tasks})
   }
 
+  editTask(event,id) {
+    let tasks = this.state.tasks
+    let index = tasks.findIndex(task => task.id === id)
+    tasks[index].edit = true
+    this.setState({edit: true, tasks: tasks})
+  }
+
+  saveEditTask(id, title) {
+    let tasks = this.state.tasks
+    let index = tasks.findIndex(task => task.id === id)
+    tasks[index].title = title
+    tasks[index].edit = false
+    this.setState({edit: false, tasks:tasks})
+  }
+
   render(){
 
     let tasks = this.state.tasks
@@ -198,7 +245,17 @@ class App extends React.Component {
 
     let tasksArr = []
     tasks.forEach((task,index) => {
-      tasksArr.push(<Task key={index} index={index} task={task} doneClick={this.doneClick} deleteTask={this.deleteTask}/>)
+      tasksArr.push(
+        <Task
+          key={index}
+          index={index}
+          task={task}
+          doneClick={this.doneClick}
+          deleteTask={this.deleteTask}
+          editTask={this.editTask}
+          saveEditTask={this.saveEditTask}
+          editing={this.state.edit}
+          />)
     })
 
     return(
@@ -213,3 +270,11 @@ class App extends React.Component {
 
 ReactDOM.render(<App />, document.getElementById("target"));
 
+
+/*
+
+Add title while editing to lacal storage
+prevent from editing more then one titla at the time
+generally stop other functions while editing...
+
+*/
