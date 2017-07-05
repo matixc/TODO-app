@@ -64,7 +64,7 @@ class App extends React.Component {
   handleSubmit(event) {
     event.preventDefault()
     if (this.state.edit === false) {
-      let newTask = {title: this.state.input, done: false, id: this.state.nextId}
+      let newTask = {title: this.state.input, done: false, edit:false, id: this.state.nextId}
       let nextId = this.state.nextId + 1
       let tasks = this.state.tasks
       tasks.push(newTask)
